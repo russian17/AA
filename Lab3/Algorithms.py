@@ -1,6 +1,5 @@
 from collections import deque
 
-# implementation of DFS and BFS
 class Algorithms:
     def __init__(self):
         self.graph = {}
@@ -9,17 +8,17 @@ class Algorithms:
     def addEdge(self, u, v):
         if u not in self.graph:
             self.graph[u] = []
+        if v not in self.graph:  # Ensure all vertices are in the graph
+            self.graph[v] = []
         self.graph[u].append(v)
 
-    def dfs(self, start):
-        visited = set()
-        stack = [start]
-        while stack:
-            node = stack.pop()
-            if node not in visited:
-                print(node, end=' ')
-                visited.add(node)
-                stack.extend(self.graph[node])
+    def dfs(self, start, visited=None):
+        if visited is None:
+            visited = set()
+        visited.add(start)
+        for neighbor in self.graph.get(start, []):  # Safely get neighbors or an empty list
+            if neighbor not in visited:
+                self.dfs(neighbor, visited)
 
     def bfs(self, start):
         visited = set()
@@ -28,12 +27,18 @@ class Algorithms:
             vertex = queue.popleft()
             if vertex not in visited:
                 visited.add(vertex)
-                print(vertex, end=" ")
-                queue.extend(set(self.graph[vertex]) - visited)
+                # Ensure only unvisited neighbors are queued
+                queue.extend([n for n in self.graph[vertex] if n not in visited])
 
-    def printGraph(self):
-        for k, v in self.graph.items():
-            print(k, v)
+    #def printGraph(self):
+     #   for k, v in self.graph.items():
+      #      print(f"{k}: {v}")
 
-    def visited(self):
+    def get_visited(self):
         return self.visited
+
+    def reset_graph(self):
+        self.graph = {}
+
+    def reset_visited(self):
+        self.visited = set()
